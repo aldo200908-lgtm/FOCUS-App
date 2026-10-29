@@ -19,7 +19,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/mountain.jpg
+    - assets/images/
     - assets/fonts/OFL.txt
   fonts:
     - family: Inter
