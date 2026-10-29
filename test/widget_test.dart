@@ -88,4 +88,38 @@ void main() {
     semantics.dispose();
     state.dispose();
   });
+  testWidgets('task helper opens microsteps and launches two-minute focus', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final state = await AppState.load(MemoryRepository(), autoTick: false);
+    await tester.pumpWidget(FocusApp(state: state));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('nav-1')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Nueva tarea'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('task-title')),
+      'Estudiar historia',
+    );
+    await tester.tap(find.text('Guardar tarea'));
+    await tester.pumpAndSettle();
+    final starter = find.text('Ayúdame a empezar');
+    await tester.ensureVisible(starter);
+    await tester.tap(starter);
+    await tester.pumpAndSettle();
+    expect(find.text('Solo el primer paso.'), findsOneWidget);
+    expect(state.tasks.single.microSteps, hasLength(3));
+    await tester.tap(find.text('Empezar solo 2 minutos'));
+    await tester.pumpAndSettle();
+    expect(state.running, isTrue);
+    expect(state.sessionMinutes, 2);
+    await tester.pumpWidget(const SizedBox());
+    state.dispose();
+  });
+
 }
