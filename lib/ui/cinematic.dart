@@ -70,14 +70,15 @@ class CinematicCard extends StatelessWidget {
             top: 16,
             child: FrostedChip(label: label),
           ),
-          Positioned(
-            right: 15,
-            top: 14,
-            child: action ?? const FrostedChip(
-              label: '',
-              icon: Icons.more_horiz_rounded,
+          if (height > 200 || action != null)
+            Positioned(
+              right: 15,
+              top: 14,
+              child: action ?? const FrostedChip(
+                label: '',
+                icon: Icons.more_horiz_rounded,
+              ),
             ),
-          ),
           Positioned(
             left: 15,
             right: 10,
