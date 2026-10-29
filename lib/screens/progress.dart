@@ -31,6 +31,7 @@ class ProgressScreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 0, 24, 22),
           child: CinematicCard(
+            imageAsset: 'assets/images/focus_progress_journey.webp',
             title: 'Racha',
             subtitle: '${state.streak} días de constancia · ${state.xp} XP',
             label: 'TU HISTORIA',
