@@ -8,6 +8,7 @@ Future<void> showStarterSheet(
   AppState state,
   FocusTask task, {
   VoidCallback? onFocus,
+  VoidCallback? onQuickStart,
 }) async {
   state.prepareTask(task.id);
   await showModalBottomSheet<void>(
@@ -85,20 +86,30 @@ Future<void> showStarterSheet(
                   'No necesitas terminar todo ahora. Empieza por dos minutos.',
                   style: TextStyle(color: muted, fontSize: 12, height: 1.5),
                 ),
-                if (onFocus != null) ...[
+                if (onQuickStart != null) ...[
                   const SizedBox(height: 18),
                   SizedBox(
                     width: double.infinity,
                     child: PressButton(
-                      label: 'Concentrarme en esta tarea',
-                      icon: Icons.arrow_forward_rounded,
+                      label: 'Empezar solo 2 minutos',
+                      icon: Icons.play_arrow_rounded,
                       onPressed: () {
                         Navigator.pop(sheetContext);
-                        onFocus();
+                        onQuickStart();
                       },
                     ),
                   ),
                 ],
+                if (onFocus != null)
+                  Center(
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.pop(sheetContext);
+                        onFocus();
+                      },
+                      child: const Text('O iniciar un Pomodoro normal'),
+                    ),
+                  ),
               ],
             ),
           ),
