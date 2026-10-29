@@ -208,6 +208,10 @@ class HomeScreen extends StatelessWidget {
                   task: task,
                   state: state,
                   onFocus: () => focusOn(task),
+                  onQuickStart: () {
+                    state.startQuickStart(task.id);
+                    navigate(2);
+                  },
                 ),
         ),
         const SizedBox(height: 26),
