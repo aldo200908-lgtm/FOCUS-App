@@ -238,4 +238,19 @@ void main() {
     restored.dispose();
   });
 
+  test('two-minute kickoff records 2 minutes and proportional XP', () {
+    final task = app.addTask('Comenzar');
+    expect(app.startQuickStart(task.id), isTrue);
+    expect(app.sessionMinutes, 2);
+    expect(app.remainingSeconds, 120);
+    expect(app.startQuickStart(task.id), isFalse);
+    now = now.add(const Duration(minutes: 2));
+    app.tick();
+    expect(app.sessions.single.taskId, task.id);
+    expect(app.sessions.single.minutes, 2);
+    expect(app.xp, 4);
+    app.resetTimer();
+    expect(app.sessionMinutes, 25);
+  });
+
 }
