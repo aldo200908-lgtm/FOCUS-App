@@ -44,7 +44,14 @@ class ConcentrationScreen extends StatelessWidget {
       children: [
         Stack(
           children: [
-            const Positioned.fill(child: Landscape(opacity: .65)),
+            Positioned.fill(
+              child: Landscape(
+                opacity: .65,
+                imageAsset: state.isBreak
+                    ? 'assets/images/focus_break_reset.webp'
+                    : 'assets/images/focus_deep_work.webp',
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
               child: Column(
