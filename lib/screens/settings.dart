@@ -34,6 +34,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       const Padding(
         padding: EdgeInsets.fromLTRB(24, 0, 24, 22),
         child: CinematicCard(
+          imageAsset: 'assets/images/focus_break_reset.webp',
           title: 'Calma',
           subtitle: 'Tu espacio, a tu manera.',
           label: 'PERSONALIZA FOCUS',
