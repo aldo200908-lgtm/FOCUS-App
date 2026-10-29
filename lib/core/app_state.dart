@@ -99,7 +99,25 @@ class AppState extends ChangeNotifier {
   int get completedToday => _tasks
       .where((t) => t.completedAt != null && day(t.completedAt!) == today)
       .length;
+
   int get pendingCount => _tasks.where((t) => !t.completed).length;
+  int get dueTodayCount => _tasks.where((t) =>
+    !t.completed && t.dueAt != null && !day(t.dueAt!).isAfter(today)
+  ).length;
+  List<FocusTask> get todayPlan {
+    final items = _tasks.where((t) => !t.completed &&
+        ((t.scheduledFor != null && !day(t.scheduledFor!).isAfter(today)) ||
+         (t.dueAt != null && !day(t.dueAt!).isAfter(today)))).toList();
+    items.sort((a, b) => a.priority.index.compareTo(b.priority.index));
+    return items;
+  }
+  List<FocusTask> get upcomingPlan {
+    final items = _tasks.where((t) => !t.completed &&
+      t.scheduledFor != null && day(t.scheduledFor!).isAfter(today)).toList();
+    items.sort((a, b) => a.scheduledFor!.compareTo(b.scheduledFor!));
+    return items;
+  }
+
   int get focusedToday => minutesOn(today);
   int minutesOn(DateTime d) => _sessions
       .where((s) => day(s.endedAt) == day(d))
@@ -161,12 +179,16 @@ class AppState extends ChangeNotifier {
     String title, {
     Priority priority = Priority.medium,
     String category = 'Personal',
+    DateTime? scheduledFor,
+    DateTime? dueAt,
   }) {
     final task = FocusTask(
       id: '${clock().microsecondsSinceEpoch}-${_idCounter++}-${Random().nextInt(1 << 30)}',
       title: _validTitle(title),
       priority: priority,
       category: category,
+      scheduledFor: scheduledFor,
+      dueAt: dueAt,
     );
     _tasks.add(task);
     _changed();
@@ -180,13 +202,70 @@ class AppState extends ChangeNotifier {
     return title.trim();
   }
 
-  void updateTask(String id, String title, Priority priority, String category) {
+  void updateTask(String id, String title, Priority priority, String category, {
+    DateTime? scheduledFor,
+    DateTime? dueAt,
+  }) {
     final task = _tasks.firstWhere((t) => t.id == id);
     task.title = _validTitle(title);
     task.priority = priority;
     task.category = category;
+    task.scheduledFor = scheduledFor;
+    task.dueAt = dueAt;
     _changed();
   }
+
+  void scheduleTask(String id, DateTime? date) {
+    final task = _tasks.firstWhere((t) => t.id == id);
+    task.scheduledFor = date;
+    _changed();
+  }
+
+  void prepareTask(String id) {
+    final task = _tasks.firstWhere((t) => t.id == id);
+    if (task.microSteps.isNotEmpty) return;
+    final title = task.title;
+    final lower = title.toLowerCase();
+    if (lower.contains('estudi') || lower.contains('repas') ||
+        lower.contains('examen') || lower.contains('leer')) {
+      task.microSteps = [
+        'Abre el material de «$title».',
+        'Elige una sola página o tema para empezar.',
+        'Dedica 5 minutos a leer y anota una idea.',
+      ];
+    } else if (lower.contains('escrib') || lower.contains('redact') ||
+        lower.contains('propuesta') || lower.contains('informe')) {
+      task.microSteps = [
+        'Abre un documento para «$title».',
+        'Escribe tres ideas sin corregirlas.',
+        'Desarrolla solo la primera idea durante 5 minutos.',
+      ];
+    } else if (lower.contains('limpi') || lower.contains('orden')) {
+      task.microSteps = [
+        'Prepara lo necesario para «$title».',
+        'Ordena una zona pequeña durante 2 minutos.',
+        'Continúa con otra zona si tienes energía.',
+      ];
+    } else {
+      task.microSteps = [
+        'Prepara lo que necesitas para «$title».',
+        'Elige la acción más pequeña que puedas hacer hoy.',
+        'Trabaja solo 2 minutos en esa acción.',
+      ];
+    }
+    task.completedMicroSteps.clear();
+    _changed();
+  }
+
+  void toggleMicroStep(String id, int index) {
+    final task = _tasks.firstWhere((t) => t.id == id);
+    if (index < 0 || index >= task.microSteps.length) return;
+    if (!task.completedMicroSteps.add(index)) {
+      task.completedMicroSteps.remove(index);
+    }
+    _changed();
+  }
+
 
   void toggleTask(String id) {
     final task = _tasks.firstWhere((t) => t.id == id);
