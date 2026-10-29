@@ -20,7 +20,9 @@ flutter run -d chrome
 ## Funciones
 
 - Inicio con saludo personalizable, paisaje decorativo, progreso diario y tarea prioritaria.
-- Tareas: crear, editar, completar, reabrir, filtrar y eliminar con confirmación; categorías y prioridades.
+- Tareas: crear, editar, completar, reabrir, filtrar y eliminar con confirmación; categorías, prioridades, fecha planificada y fecha límite.
+- Plan diario: filtros Hoy y Próximas; las tareas vencidas o programadas anteriormente siguen apareciendo en Hoy.
+- «Ayúdame a empezar»: propone tres microacciones offline y recuerda los pasos completados; sesión de arranque de dos minutos.
 - Pomodoro: enfoque y descanso configurables, pausa, reanudación, reinicio y tarea seleccionada.
 - Progreso: minutos persistidos, gráfico de 7 días, tareas completadas, XP, niveles, rachas y tres logros.
 - Ajustes: nombre, duraciones y movimiento reducido; se respeta también la preferencia del sistema.
@@ -34,18 +36,18 @@ El temporizador persiste una fecha de finalización y se reconcilia al volver a 
 
 **Android:** el sistema puede suspender o terminar el proceso en segundo plano. Esta versión no incluye servicio en primer plano, alarma, sonido ni notificaciones del sistema; no garantiza avisos con la aplicación cerrada. Recupera y registra una sesión vencida al abrir. Un cierre forzado inmediatamente después de tocar un control podría interrumpir una escritura pendiente; SharedPreferences es almacenamiento local para el MVP, no una base de datos con garantía transaccional.
 
-**XP:** 20 por la primera finalización de cada tarea y 50 por sesión de enfoque. Reabrir/completar una tarea no duplica XP. El historial de XP se conserva aunque se elimine la tarea; el contador de tareas completadas refleja las tareas actuales. Cada nivel necesita 200 XP. La racha cuenta días locales consecutivos con una sesión o una primera finalización y se mantiene durante el día siguiente hasta que exista un día sin actividad. El gráfico asigna cada sesión al día local en que terminó.
+**XP:** 20 por la primera finalización de cada tarea; las sesiones conceden 2 XP por minuto hasta 50 XP (25 minutos o más). Reabrir/completar una tarea no duplica XP. El historial de XP se conserva aunque se elimine la tarea; el contador de tareas completadas refleja las tareas actuales. Cada nivel necesita 200 XP. La racha cuenta días locales consecutivos con una sesión o una primera finalización y se mantiene durante el día siguiente hasta que exista un día sin actividad. El gráfico asigna cada sesión al día local en que terminó.
 
 ## Diseño y accesibilidad
 
-Fondo `#0B0B0D`, acento `#FF8A3D`, Inter local, radios de 28 px. `GlassCard` recorta el blur de 24 px mediante ClipRRect; solo navegación y paneles destacados usan BackdropFilter. Las listas usan translucidez sin blur por tarjeta. La fotografía está aislada con RepaintBoundary y excluida de semántica. Las transiciones usan ease-out de 300 ms o duración cero con movimiento reducido. Navegación con etiquetas y acciones semánticas, tooltips, texto adaptable y formularios desplazables con teclado.
+Fondo `#0B0B0D`, acento `#FF8A3D`, Inter local, radios de 28 px. Las tarjetas fotográficas editoriales reutilizan una sola imagen local licenciada con distintos encuadres y tintes; no descargan imágenes ni datos. `GlassCard` recorta el blur de 24 px mediante ClipRRect; solo navegación y paneles destacados usan BackdropFilter. Las listas usan translucidez sin blur por tarjeta. La fotografía está aislada con RepaintBoundary y excluida de semántica. Las transiciones usan ease-out de 300 ms o duración cero con movimiento reducido. Navegación con etiquetas y acciones semánticas, tooltips, texto adaptable y formularios desplazables con teclado.
 
 La dirección naranja solicitada sustituye al verde menta de la especificación inicial. Consulta [diseño](docs/design/LIQUID_GLASS.md) y [fuentes y licencias de recursos](docs/ASSETS.md).
 
 ## Verificación
 
 ```sh
-dart format --output=none --set-exit-if-changed lib test
+dart format lib test
 flutter analyze
 flutter test
 flutter build web --release
@@ -57,5 +59,8 @@ GitHub Actions ejecuta formato, análisis, pruebas y compilación Android. Publi
 Las 18 pruebas cubren CRUD/persistencia, sesiones recuperadas sin duplicados, pausa, descansos, rachas, errores de guardado, cambio de día, atribución de sesiones pausadas, límites Unicode, acciones de lector de pantalla, navegación/formularios a 360 y 390 px y texto ampliado al 160 %. Las capturas web móviles sirven para revisar composición; no sustituyen mediciones de rendimiento en un Android físico.
 
 ## Capturas móviles
+
+**Nota:** las capturas disponibles reflejan el diseño anterior y deben actualizarse tras validar el nuevo APK en un dispositivo. No son evidencia del rediseño editorial.
+
 
 [Inicio](docs/screenshots/01-inicio.png) · [Tareas](docs/screenshots/02-tareas.png) · [Concentración](docs/screenshots/03-concentración.png) · [Progreso](docs/screenshots/04-progreso.png) · [Ajustes](docs/screenshots/05-ajustes.png)
