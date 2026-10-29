@@ -20,6 +20,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byTooltip('Nueva tarea'));
       await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Guardar tarea'));
       await tester.tap(find.text('Guardar tarea'));
       await tester.pumpAndSettle();
       expect(find.text('Escribe un título para tu tarea'), findsOneWidget);
@@ -27,6 +28,7 @@ void main() {
         find.byKey(const ValueKey('task-title')),
         'Leer 10 páginas',
       );
+      await tester.ensureVisible(find.text('Guardar tarea'));
       await tester.tap(find.text('Guardar tarea'));
       await tester.pumpAndSettle();
       expect(find.text('Leer 10 páginas'), findsOneWidget);
