@@ -38,6 +38,7 @@ class ConcentrationScreen extends StatelessWidget {
     final time =
         '${(seconds ~/ 60).toString().padLeft(2, '0')}:${(seconds % 60).toString().padLeft(2, '0')}';
     final fresh = seconds == state.sessionMinutes * 60;
+    final dialSize = min(250.0, MediaQuery.sizeOf(context).width * .62);
     return ListView(
       padding: const EdgeInsets.only(bottom: 130),
       children: [
@@ -45,20 +46,20 @@ class ConcentrationScreen extends StatelessWidget {
           children: [
             const Positioned.fill(child: Landscape(opacity: .65)),
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 32, 24, 0),
+              padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
               child: Column(
                 children: [
                   const Eyebrow(
                     'ESTÁS EXACTAMENTE DONDE DEBES ESTAR',
                     color: Color(0xCCFFFFFF),
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 10),
                   Text(
                     'Solo este momento.',
                     style: Theme.of(context).textTheme.headlineMedium,
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 14),
                   GlassCard(
                     radius: 50,
                     padding: const EdgeInsets.all(5),
@@ -110,14 +111,14 @@ class ConcentrationScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 34),
+                  const SizedBox(height: 16),
                   SizedBox(
-                    width: 278,
-                    height: 278,
+                    width: dialSize,
+                    height: dialSize,
                     child: CustomPaint(
                       painter: _TimerRing(state.timerProgress),
                       child: Padding(
-                        padding: const EdgeInsets.all(28),
+                        padding: const EdgeInsets.all(20),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -140,7 +141,7 @@ class ConcentrationScreen extends StatelessWidget {
                                 child: Text(
                                   time,
                                   style: const TextStyle(
-                                    fontSize: 66,
+                                    fontSize: 58,
                                     height: 1.2,
                                     fontWeight: FontWeight.w300,
                                     letterSpacing: -4,
@@ -167,7 +168,7 @@ class ConcentrationScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 16),
                   Text(
                     state.timerFinished
                         ? (state.isBreak
@@ -177,7 +178,7 @@ class ConcentrationScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: const TextStyle(color: muted, fontSize: 12),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 12),
                 ],
               ),
             ),
