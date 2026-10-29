@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'design.dart';
 
 /// Reusable offline photo card. Only one licensed local photograph is shipped,
 /// deliberately cropped and tinted differently across screens.
