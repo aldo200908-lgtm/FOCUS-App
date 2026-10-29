@@ -286,6 +286,10 @@ class _TasksScreenState extends State<TasksScreen> {
                     if (!widget.state.running) widget.state.selectTask(t.id);
                     widget.navigate!(2);
                   },
+                  onQuickStart: widget.navigate == null ? null : () {
+                    widget.state.startQuickStart(t.id);
+                    widget.navigate!(2);
+                  },
                 ),
               ),
             ),
@@ -318,10 +322,12 @@ class TaskCard extends StatelessWidget {
     required this.task,
     required this.state,
     this.onFocus,
+    this.onQuickStart,
   });
   final FocusTask task;
   final AppState state;
   final VoidCallback? onFocus;
+  final VoidCallback? onQuickStart;
   @override
   Widget build(BuildContext context) => GlassCard(
     padding: const EdgeInsets.fromLTRB(10, 12, 10, 12),
@@ -410,7 +416,9 @@ class TaskCard extends StatelessWidget {
                     children: [
                       TextButton.icon(
                         onPressed: () => showStarterSheet(
-                          context, state, task, onFocus: onFocus,
+                          context, state, task,
+                          onFocus: onFocus,
+                          onQuickStart: onQuickStart,
                         ),
                         icon: const Icon(Icons.auto_awesome_outlined, size: 15),
                         label: const Text('Ayúdame a empezar',
