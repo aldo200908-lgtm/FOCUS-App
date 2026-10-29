@@ -27,7 +27,7 @@
 - [x] 1. Generar proyecto Android/web y configuración CI. Escribir pruebas del contrato AppState: CRUD persistente, temporizador y estadísticas. Ejecutar en rojo, implementar modelos/repositorio/controlador y ejecutar en verde.
 - [x] 2. Implementar tema, GlassCard, botones, navegación y cinco pantallas. Estado consumido: AppState; operaciones addTask/updateTask/toggleTask/deleteTask/startTimer/pauseTimer/resetTimer/updateSettings. Pruebas de widgets para formularios, navegación y anchuras móviles.
 - [x] 3. Añadir fotografía y tipografía locales con licencia, documentar límites, ejecutar format/analyze/test/build web y revisar capturas móviles.
-- [ ] 4. Revisar diff completo, compilar APK si hay SDK o documentar límite local y delegar compilación al workflow. Commit, push de la rama y crear PR con evidencia real.
+- [x] 4. Revisar diff completo, compilar APK si hay SDK o documentar límite local y delegar compilación al workflow. Commit, push de la rama y crear PR con evidencia real.
 
 ## Registro de ejecución
 
@@ -37,3 +37,5 @@
 - Revisión independiente: se corrigieron los seis hallazgos (acción semántica de navegación, intención de sesión pausada, cambio de día en reposo, logro de primera tarea, logro de racha permanente y límite de títulos Unicode). Las regresiones se observaron en rojo y luego en verde.
 - Se incluyó la licencia completa de Inter en la app y se localizó Material a español. No se añadieron servicios remotos ni notificaciones.
 - El entorno local necesitó instalar Flutter, SDK/NDK Android y JDK completo; Gradle usa el proxy y truststore del entorno, sin añadir esa configuración al repositorio.
+
+- Entrega: build web y APK Android debug generados; rama publicada y PR #1 abierto. Véase `docs/VALIDATION.md`.
