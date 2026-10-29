@@ -74,7 +74,7 @@ class CinematicCard extends StatelessWidget {
             right: 15,
             top: 14,
             child: action ?? const FrostedChip(
-              label: 'FOCUS',
+              label: '',
               icon: Icons.more_horiz_rounded,
             ),
           ),
