@@ -3,6 +3,7 @@ import '../core/app_state.dart';
 import '../ui/design.dart';
 import '../ui/cinematic.dart';
 import 'tasks.dart';
+import 'task_starter.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key, required this.state, required this.navigate});
@@ -87,14 +88,33 @@ class HomeScreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: PressButton(
-            label: task == null ? 'Crear mi primera tarea' : 'Empezar a concentrarme',
-            icon: task == null ? Icons.add_rounded : Icons.arrow_forward_rounded,
-            onPressed: () => task == null
-                ? showTaskEditor(context, state)
-                : focusOn(task),
+            label: task == null ? 'Crear mi primera tarea' : 'No sé por dónde empezar',
+            icon: task == null ? Icons.add_rounded : Icons.auto_awesome_rounded,
+            onPressed: () {
+              if (task == null) {
+                showTaskEditor(context, state);
+              } else {
+                showStarterSheet(
+                  context, state, task,
+                  onFocus: () => focusOn(task),
+                  onQuickStart: () {
+                    state.startQuickStart(task.id);
+                    navigate(2);
+                  },
+                );
+              }
+            },
           ),
         ),
-        const SizedBox(height: 30),
+        if (task != null)
+          Center(
+            child: TextButton(
+              onPressed: () => focusOn(task),
+              child: const Text('O ir directamente al Pomodoro ↗',
+                  style: TextStyle(color: muted, fontSize: 12)),
+            ),
+          ),
+        const SizedBox(height: 22),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: EditorialSectionTitle(
