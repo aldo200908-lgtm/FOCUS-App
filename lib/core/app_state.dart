@@ -146,7 +146,8 @@ class AppState extends ChangeNotifier {
     return best;
   }
 
-  int get xp => _awards.length * 20 + _sessions.length * 50;
+  int get xp => _awards.length * 20 +
+      _sessions.fold<int>(0, (sum, session) => sum + min(50, session.minutes * 2));
   int get level => 1 + xp ~/ 200;
   double get levelProgress => (xp % 200) / 200;
   int get streak {
@@ -306,6 +307,22 @@ class AppState extends ChangeNotifier {
     if (isBreak == value) return;
     isBreak = value;
     resetTimer();
+  }
+
+  /// A two-minute kickoff that leaves the user's normal Pomodoro setting intact.
+  /// Returns false if another session is active or the task no longer exists.
+  bool startQuickStart(String taskId) {
+    if (hasActiveSession || !_tasks.any((t) => t.id == taskId && !t.completed)) {
+      return false;
+    }
+    isBreak = false;
+    selectedTaskId = taskId;
+    timerFinished = false;
+    _sessionMinutes = 2;
+    _remaining = 120;
+    _activeTaskId = taskId;
+    startTimer();
+    return true;
   }
 
   void startTimer() {
