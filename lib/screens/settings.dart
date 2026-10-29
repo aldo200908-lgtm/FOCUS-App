@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/app_state.dart';
 import '../ui/design.dart';
+import '../ui/cinematic.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key, required this.state});
@@ -29,6 +30,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
         kicker: 'TU ESPACIO. TUS REGLAS.',
         title: 'A tu manera.',
         subtitle: 'Encuentra el ritmo que funciona para ti.',
+      ),
+      const Padding(
+        padding: EdgeInsets.fromLTRB(24, 0, 24, 22),
+        child: CinematicCard(
+          title: 'Calma',
+          subtitle: 'Tu espacio, a tu manera.',
+          label: 'PERSONALIZA FOCUS',
+          height: 172,
+          tint: Color(0xFF4C7786),
+          alignment: Alignment.centerLeft,
+        ),
       ),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
