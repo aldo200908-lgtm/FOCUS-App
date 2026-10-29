@@ -4,7 +4,7 @@
 
 **Tecnología:** Flutter y Dart, Android primero, funcionamiento offline en el núcleo.
 
-**Diseño:** oscuro, elegante, verde menta, tarjetas limpias y navegación sencilla.
+**Diseño (actualizado 29-10-2026):** Liquid Glass oscuro y cinematográfico, fondo #0B0B0D y acento naranja cálido #FF8A3D. Tarjetas translúcidas de radio 28 px y navegación inferior flotante. La dirección visual solicitada sustituye al verde menta inicial; ver [detalle de diseño](design/LIQUID_GLASS.md).
 
 ## Pantallas
 1. Inicio: tarea prioritaria, progreso diario y acción rápida.
