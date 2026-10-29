@@ -7,6 +7,7 @@ class CinematicCard extends StatelessWidget {
   const CinematicCard({
     super.key,
     required this.title,
+    required this.imageAsset,
     required this.subtitle,
     required this.label,
     this.height = 260,
@@ -18,6 +19,7 @@ class CinematicCard extends StatelessWidget {
   });
 
   final String title;
+  final String imageAsset;
   final String subtitle;
   final String label;
   final double height;
@@ -38,14 +40,15 @@ class CinematicCard extends StatelessWidget {
           RepaintBoundary(
             child: ColorFiltered(
               colorFilter: ColorFilter.mode(
-                tint.withValues(alpha: .28),
+                tint.withValues(alpha: .15),
                 BlendMode.overlay,
               ),
               child: Image.asset(
-                'assets/images/mountain.jpg',
+                imageAsset,
                 fit: BoxFit.cover,
                 alignment: alignment,
-                cacheWidth: 950,
+                cacheWidth: 900,
+                filterQuality: FilterQuality.medium,
                 errorBuilder: (context, error, stack) =>
                     ColoredBox(color: tint),
               ),
