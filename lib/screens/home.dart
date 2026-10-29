@@ -1,217 +1,220 @@
 import 'package:flutter/material.dart';
 import '../core/app_state.dart';
 import '../ui/design.dart';
+import '../ui/cinematic.dart';
 import 'tasks.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key, required this.state, required this.navigate});
   final AppState state;
   final ValueChanged<int> navigate;
+
+  void focusOn(FocusTask? task) {
+    if (!state.running) state.selectTask(task?.id);
+    navigate(2);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final task = state.priorityTask;
+    final task = state.todayPlan.firstOrNull ?? state.priorityTask;
     final completed = state.completedToday;
     final total = completed + state.pendingCount;
     return ListView(
-      padding: const EdgeInsets.only(bottom: 128),
+      padding: const EdgeInsets.only(bottom: 150),
       children: [
-        Stack(
-          children: [
-            const Positioned.fill(child: Landscape()),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(26, 22, 26, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 6,
-                        height: 6,
-                        decoration: const BoxDecoration(
-                          color: accent,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          state.name.isEmpty
-                              ? 'Hola. Este momento es tuyo.'
-                              : 'Hola, ${state.name}.',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: Color(0xDDFFFFFF),
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        tooltip: 'Abrir ajustes',
-                        onPressed: () => navigate(4),
-                        icon: const Icon(Icons.tune_rounded, size: 20),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 70),
-                  const Eyebrow(
-                    'RESPIRA. ELIGE. EMPIEZA.',
-                    color: Color(0xDDFFFFFF),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Haz espacio para\nlo importante.',
-                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                      fontSize: 40,
-                      letterSpacing: -1.8,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Un poco de enfoque.\nUn gran paso hacia tus objetivos.',
-                    style: TextStyle(
-                      color: Color(0xBBFFFFFF),
-                      height: 1.65,
-                      fontSize: 13,
-                    ),
-                  ),
-                  const SizedBox(height: 26),
-                  PressButton(
-                    label: 'Empezar a concentrarme',
-                    onPressed: () {
-                      if (!state.running) state.selectTask(task?.id);
-                      navigate(2);
-                    },
-                  ),
-                  const SizedBox(height: 28),
-                ],
-              ),
-            ),
-          ],
-        ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 23),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              GlassCard(
-                blur: true,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Expanded(child: Eyebrow('TU PROGRESO DE HOY')),
-                        Text(
-                          total == 0
-                              ? 'Comienza hoy'
-                              : '${(completed / total * 100).round()}%',
-                          style: const TextStyle(
-                            color: accent,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 18),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _Metric(
-                            value: '${state.focusedToday}',
-                            label: 'min de enfoque',
-                          ),
-                        ),
-                        Container(height: 38, width: 1, color: Colors.white12),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 24),
-                            child: _Metric(
-                              value:
-                                  '$completed${total > 0 ? ' / $total' : ''}',
-                              label: 'tareas completadas',
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 22),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: LinearProgressIndicator(
-                        value: total == 0 ? 0 : completed / total,
-                        minHeight: 4,
-                        backgroundColor: Colors.white.withValues(alpha: .08),
-                        color: accent,
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    Text(
-                      state.pendingCount == 0
-                          ? 'Todo empieza con un pequeño paso.'
-                          : 'Te esperan ${state.pendingCount} tareas. Una a la vez.',
-                      style: const TextStyle(color: muted, fontSize: 11),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 30),
               Row(
                 children: [
+                  const Icon(Icons.circle, color: accent, size: 7),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Tu siguiente paso',
-                      style: Theme.of(context).textTheme.titleLarge,
+                      state.name.isEmpty
+                          ? 'TU ESPACIO PERSONAL'
+                          : 'HOLA, ${state.name.toUpperCase()}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 10, color: muted, letterSpacing: 2,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
-                  TextButton(
-                    onPressed: () => navigate(1),
-                    child: const Text(
-                      'Ver tareas  ↗',
-                      style: TextStyle(color: muted, fontSize: 12),
-                    ),
+                  IconButton(
+                    tooltip: 'Abrir ajustes',
+                    onPressed: () => navigate(4),
+                    icon: const Icon(Icons.more_horiz_rounded, size: 23),
                   ),
                 ],
               ),
               const SizedBox(height: 12),
-              if (task != null)
-                TaskCard(
-                  task: task,
-                  state: state,
-                  onFocus: () {
-                    if (!state.running) state.selectTask(task.id);
-                    navigate(2);
-                  },
-                )
-              else
-                EmptyState(
-                  title: state.tasks.isEmpty
-                      ? 'Dale intención a tu día.'
-                      : 'Has hecho espacio.',
-                  message: state.tasks.isEmpty
-                      ? 'Crea tu primera tarea y convierte lo pendiente en un pequeño siguiente paso.'
-                      : 'Todas tus tareas están completas. Disfruta el momento o elige un nuevo objetivo.',
-                  action: TextButton(
-                    onPressed: () => showTaskEditor(context, state),
-                    child: const Text('Añadir una tarea  +'),
-                  ),
+              Text(
+                'Haz espacio para\nlo importante.',
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  fontSize: 39,
+                  letterSpacing: -2.2,
+                  height: 1.08,
                 ),
-              const SizedBox(height: 30),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.spa_outlined, color: muted, size: 14),
-                  SizedBox(width: 8),
-                  Flexible(
-                    child: Text(
-                      'El progreso empieza por estar presente.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: muted, fontSize: 10),
-                    ),
-                  ),
-                ],
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Un día a la vez. Sin ruido, sin presión.',
+                style: TextStyle(color: muted, fontSize: 13),
               ),
             ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: CinematicCard(
+            key: const ValueKey('hero-today'),
+            title: 'Hoy',
+            subtitle: state.todayPlan.isEmpty
+                ? 'Todo empieza con una pequeña acción.'
+                : '${state.todayPlan.length} tareas esperan tu atención.',
+            label: '${state.pendingCount} PENDIENTES',
+            height: 290,
+            tint: const Color(0xFF087FA8),
+            alignment: const Alignment(.45, -.3),
+            onTap: () => navigate(1),
+          ),
+        ),
+        const SizedBox(height: 14),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: PressButton(
+            label: task == null ? 'Crear mi primera tarea' : 'Empezar a concentrarme',
+            icon: task == null ? Icons.add_rounded : Icons.arrow_forward_rounded,
+            onPressed: () => task == null
+                ? showTaskEditor(context, state)
+                : focusOn(task),
+          ),
+        ),
+        const SizedBox(height: 30),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: EditorialSectionTitle(
+            title: 'Tu panorama',
+            trailing: Text(
+              '${state.focusedToday} MIN DE ENFOQUE',
+              style: const TextStyle(color: muted, fontSize: 9, letterSpacing: 1),
+            ),
+          ),
+        ),
+        const SizedBox(height: 14),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Row(
+            children: [
+              Expanded(
+                child: CinematicCard(
+                  title: 'Plan',
+                  subtitle: '${state.upcomingPlan.length} próximas',
+                  label: 'CALENDARIO',
+                  height: 184,
+                  tint: const Color(0xFF759F6D),
+                  alignment: Alignment.bottomCenter,
+                  onTap: () => navigate(1),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: CinematicCard(
+                  title: 'Ritmo',
+                  subtitle: '${state.streak} días de racha',
+                  label: 'PROGRESO',
+                  height: 184,
+                  tint: const Color(0xFFAD6644),
+                  alignment: Alignment.topLeft,
+                  onTap: () => navigate(3),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 23),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: GlassCard(
+            blur: true,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Expanded(child: Eyebrow('HOY ESTÁS AVANZANDO')),
+                    Text(
+                      total == 0 ? 'Tu primer día' :
+                          '${(completed / total * 100).round()}%',
+                      style: const TextStyle(color: accent, fontSize: 12,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 17),
+                Row(
+                  children: [
+                    Expanded(child: _Metric(value: '${state.focusedToday}',
+                        label: 'minutos de enfoque')),
+                    Container(width: 1, height: 40, color: Colors.white12),
+                    const SizedBox(width: 20),
+                    Expanded(child: _Metric(value: '$completed / $total',
+                        label: 'tareas completadas')),
+                  ],
+                ),
+                const SizedBox(height: 18),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: LinearProgressIndicator(
+                    value: total == 0 ? 0 : completed / total,
+                    color: accent,
+                    backgroundColor: Colors.white12,
+                    minHeight: 4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 26),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: EditorialSectionTitle(
+            title: 'Tu siguiente paso',
+            trailing: TextButton(
+              onPressed: () => navigate(1),
+              child: const Text('Todas las tareas ↗',
+                  style: TextStyle(fontSize: 11, color: muted)),
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: task == null
+              ? EmptyState(
+                  title: 'Un comienzo sencillo.',
+                  message: 'Anota una tarea. Nosotros te ayudamos a dividirla.',
+                  action: TextButton(
+                    onPressed: () => showTaskEditor(context, state),
+                    child: const Text('Crear una tarea +'),
+                  ),
+                )
+              : TaskCard(
+                  task: task,
+                  state: state,
+                  onFocus: () => focusOn(task),
+                ),
+        ),
+        const SizedBox(height: 26),
+        const Center(
+          child: Text(
+            'MENOS PRISA. MÁS PRESENCIA.',
+            style: TextStyle(fontSize: 9, color: muted, letterSpacing: 2),
           ),
         ),
       ],
@@ -226,14 +229,9 @@ class _Metric extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(
-        value,
-        style: const TextStyle(
-          fontSize: 28,
-          letterSpacing: -1,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
+      Text(value, style: const TextStyle(
+        fontSize: 28, fontWeight: FontWeight.w600, letterSpacing: -1.4,
+      )),
       const SizedBox(height: 4),
       Text(label, style: const TextStyle(fontSize: 10, color: muted)),
     ],
