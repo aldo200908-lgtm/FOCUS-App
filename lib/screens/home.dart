@@ -73,6 +73,7 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: CinematicCard(
             key: const ValueKey('hero-today'),
+            imageAsset: 'assets/images/focus_hero_today.webp',
             title: 'Hoy',
             subtitle: state.todayPlan.isEmpty
                 ? 'Todo empieza con una pequeña acción.'
@@ -132,6 +133,7 @@ class HomeScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: CinematicCard(
+                  imageAsset: 'assets/images/focus_planner_schedule.webp',
                   title: 'Plan',
                   subtitle: '${state.upcomingPlan.length} próximas',
                   label: 'CALENDARIO',
@@ -144,6 +146,7 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: CinematicCard(
+                  imageAsset: 'assets/images/focus_progress_journey.webp',
                   title: 'Ritmo',
                   subtitle: '${state.streak} días de racha',
                   label: 'PROGRESO',
