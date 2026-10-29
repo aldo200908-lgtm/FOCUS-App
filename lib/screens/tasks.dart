@@ -234,6 +234,7 @@ class _TasksScreenState extends State<TasksScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 0, 24, 23),
               child: CinematicCard(
+                imageAsset: 'assets/images/focus_planner_schedule.webp',
                 title: 'Plan',
                 subtitle: 'Haz espacio para lo que importa.',
                 label: '${widget.state.todayPlan.length} tareas para hoy',
