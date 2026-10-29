@@ -40,7 +40,7 @@ El temporizador persiste una fecha de finalización y se reconcilia al volver a 
 
 ## Diseño y accesibilidad
 
-Fondo `#0B0B0D`, acento `#FF8A3D`, Inter local, radios de 28 px. Las tarjetas fotográficas editoriales reutilizan una sola imagen local licenciada con distintos encuadres y tintes; no descargan imágenes ni datos. `GlassCard` recorta el blur de 24 px mediante ClipRRect; solo navegación y paneles destacados usan BackdropFilter. Las listas usan translucidez sin blur por tarjeta. La fotografía está aislada con RepaintBoundary y excluida de semántica. Las transiciones usan ease-out de 300 ms o duración cero con movimiento reducido. Navegación con etiquetas y acciones semánticas, tooltips, texto adaptable y formularios desplazables con teclado.
+Fondo `#0B0B0D`, acento `#FF8A3D`, Inter local, radios de 28 px. Las tarjetas editoriales usan cinco fotografías WebP locales, cada una asignada a su pantalla (Inicio, Agenda, Concentración, Descanso y Progreso); no se descargan imágenes durante el uso. `GlassCard` recorta el blur de 24 px mediante ClipRRect; solo navegación y paneles destacados usan BackdropFilter. Las listas usan translucidez sin blur por tarjeta. La fotografía está aislada con RepaintBoundary y excluida de semántica. Las transiciones usan ease-out de 300 ms o duración cero con movimiento reducido. Navegación con etiquetas y acciones semánticas, tooltips, texto adaptable y formularios desplazables con teclado.
 
 La dirección naranja solicitada sustituye al verde menta de la especificación inicial. Consulta [diseño](docs/design/LIQUID_GLASS.md) y [fuentes y licencias de recursos](docs/ASSETS.md).
 
