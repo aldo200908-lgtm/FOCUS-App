@@ -283,7 +283,9 @@ class _TasksScreenState extends State<TasksScreen> {
                   task: t,
                   state: widget.state,
                   onFocus: widget.navigate == null ? null : () {
-                    if (!widget.state.running) widget.state.selectTask(t.id);
+                    if (!widget.state.running) {
+                      widget.state.selectTask(t.id);
+                    }
                     widget.navigate!(2);
                   },
                   onQuickStart: widget.navigate == null ? null : () {
