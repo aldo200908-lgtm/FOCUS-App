@@ -180,7 +180,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   applicationName: 'FOCUS',
                   applicationVersion: '1.0.0',
                   applicationLegalese:
-                      'Fotografía: Unsplash · Licencia Unsplash\nimages.unsplash.com/photo-1464822759023-fed622ff2c3b\nInter: Rasmus Andersson · SIL OFL 1.1\nIconos Material: Apache 2.0',
+                      'Paisajes FOCUS: imágenes facilitadas por el usuario, generadas con OpenAI.\nFotografía original adicional: Unsplash · Licencia Unsplash\nInter: Rasmus Andersson · SIL OFL 1.1\nIconos Material: Apache 2.0',
                 ),
                 child: const Text(
                   'FOCUS 1.0 · Créditos y licencias',
