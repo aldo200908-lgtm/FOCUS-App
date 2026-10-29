@@ -172,7 +172,7 @@ class ConcentrationScreen extends StatelessWidget {
                     state.timerFinished
                         ? (state.isBreak
                               ? 'Descanso completado. Vuelve con calma.'
-                              : 'Sesión completada · +50 XP')
+                              : 'Sesión completada · +${min(50, state.sessionMinutes * 2)} XP')
                         : '${state.isBreak ? 'Descanso' : 'Sesión ${(state.sessions.where((s) => AppState.day(s.endedAt) == state.today).length + 1).toString().padLeft(2, '0')}'} · ${state.sessionMinutes} minutos',
                     textAlign: TextAlign.center,
                     style: const TextStyle(color: muted, fontSize: 12),
