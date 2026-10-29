@@ -233,8 +233,13 @@ class PageHeading extends StatelessWidget {
 }
 
 class Landscape extends StatelessWidget {
-  const Landscape({super.key, this.opacity = 1});
+  const Landscape({
+    super.key,
+    this.opacity = 1,
+    this.imageAsset = 'assets/images/mountain.jpg',
+  });
   final double opacity;
+  final String imageAsset;
   @override
   Widget build(BuildContext context) => ExcludeSemantics(
     child: RepaintBoundary(
@@ -242,11 +247,12 @@ class Landscape extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           Image.asset(
-            'assets/images/mountain.jpg',
+            imageAsset,
             fit: BoxFit.cover,
             alignment: const Alignment(.25, 0),
             opacity: AlwaysStoppedAnimation(opacity),
-            cacheWidth: 1200,
+            cacheWidth: 900,
+            gaplessPlayback: true,
           ),
           const DecoratedBox(
             decoration: BoxDecoration(

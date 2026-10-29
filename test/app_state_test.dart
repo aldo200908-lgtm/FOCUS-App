@@ -191,4 +191,66 @@ void main() {
     expect(app.addTask(title).title, title);
     expect(() => app.addTask('${title}a'), throwsArgumentError);
   });
+  test('schedules and deadlines persist and populate today/upcoming views', () async {
+    final today = DateTime(2026, 10, 29);
+    final tomorrow = DateTime(2026, 10, 30);
+    final current = app.addTask('Hoy', scheduledFor: today, dueAt: today);
+    final future = app.addTask('Mañana', scheduledFor: tomorrow);
+    expect(app.todayPlan.map((t) => t.id), contains(current.id));
+    expect(app.upcomingPlan.map((t) => t.id), contains(future.id));
+    expect(app.dueTodayCount, 1);
+    app.scheduleTask(future.id, today);
+    expect(app.todayPlan.map((t) => t.id), contains(future.id));
+    await app.flush();
+    final restored = await AppState.load(repo, clock: () => now, autoTick: false);
+    expect(restored.tasks.firstWhere((t) => t.id == current.id).dueAt, today);
+    expect(restored.todayPlan.length, 2);
+    restored.dispose();
+  });
+
+  test('offline starter breaks down tasks and persists completed microsteps', () async {
+    final task = app.addTask('Estudiar biología');
+    app.prepareTask(task.id);
+    expect(task.microSteps, hasLength(3));
+    expect(task.microSteps.first, contains('Estudiar biología'));
+    app.toggleMicroStep(task.id, 0);
+    expect(task.stepsDone, 1);
+    expect(app.xp, 0);
+    await app.flush();
+    final restored = await AppState.load(repo, autoTick: false);
+    expect(restored.tasks.single.microSteps, hasLength(3));
+    expect(restored.tasks.single.completedMicroSteps, {0});
+    restored.dispose();
+  });
+
+  test('old task JSON loads with optional plan fields absent', () async {
+    final task = app.addTask('Anterior');
+    await app.flush();
+    final oldJson = repo.value!;
+    repo.value = oldJson.replaceAll(
+      ',"scheduledFor":null,"dueAt":null,"microSteps":[],"completedMicroSteps":[]',
+      '',
+    );
+    final restored = await AppState.load(repo, autoTick: false);
+    expect(restored.tasks.single.id, task.id);
+    expect(restored.tasks.single.scheduledFor, isNull);
+    expect(restored.tasks.single.microSteps, isEmpty);
+    restored.dispose();
+  });
+
+  test('two-minute kickoff records 2 minutes and proportional XP', () {
+    final task = app.addTask('Comenzar');
+    expect(app.startQuickStart(task.id), isTrue);
+    expect(app.sessionMinutes, 2);
+    expect(app.remainingSeconds, 120);
+    expect(app.startQuickStart(task.id), isFalse);
+    now = now.add(const Duration(minutes: 2));
+    app.tick();
+    expect(app.sessions.single.taskId, task.id);
+    expect(app.sessions.single.minutes, 2);
+    expect(app.xp, 4);
+    app.resetTimer();
+    expect(app.sessionMinutes, 25);
+  });
+
 }

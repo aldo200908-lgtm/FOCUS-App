@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/app_state.dart';
 import '../ui/design.dart';
+import '../ui/cinematic.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key, required this.state});
@@ -29,6 +30,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
         kicker: 'TU ESPACIO. TUS REGLAS.',
         title: 'A tu manera.',
         subtitle: 'Encuentra el ritmo que funciona para ti.',
+      ),
+      const Padding(
+        padding: EdgeInsets.fromLTRB(24, 0, 24, 22),
+        child: CinematicCard(
+          imageAsset: 'assets/images/focus_break_reset.webp',
+          title: 'Calma',
+          subtitle: 'Tu espacio, a tu manera.',
+          label: 'PERSONALIZA FOCUS',
+          height: 172,
+          tint: Color(0xFF4C7786),
+          alignment: Alignment.centerLeft,
+        ),
       ),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -167,7 +180,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   applicationName: 'FOCUS',
                   applicationVersion: '1.0.0',
                   applicationLegalese:
-                      'Fotografía: Unsplash · Licencia Unsplash\nimages.unsplash.com/photo-1464822759023-fed622ff2c3b\nInter: Rasmus Andersson · SIL OFL 1.1\nIconos Material: Apache 2.0',
+                      'Paisajes FOCUS: imágenes facilitadas por el usuario, generadas con OpenAI.\nFotografía original adicional: Unsplash · Licencia Unsplash\nInter: Rasmus Andersson · SIL OFL 1.1\nIconos Material: Apache 2.0',
                 ),
                 child: const Text(
                   'FOCUS 1.0 · Créditos y licencias',

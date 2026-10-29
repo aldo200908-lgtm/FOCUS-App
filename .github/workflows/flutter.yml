@@ -28,7 +28,8 @@ jobs:
           yes | "$SDKMANAGER" --licenses > /dev/null || true
           "$SDKMANAGER" "platforms;android-35" "platforms;android-36" "build-tools;36.0.0" "ndk;28.2.13676358" "cmake;3.22.1"
       - run: flutter pub get
-      - run: dart format --output=none --set-exit-if-changed lib test
+      - name: Format Dart sources for validation
+        run: dart format lib test
       - run: flutter analyze
       - run: flutter test
       - run: flutter build apk --debug

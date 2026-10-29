@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../core/app_state.dart';
 import '../ui/design.dart';
+import '../ui/cinematic.dart';
+import 'task_starter.dart';
+
+String shortTaskDate(DateTime date) => '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
 
 Future<void> showTaskEditor(
   BuildContext context,
@@ -30,6 +34,43 @@ class _TaskEditorState extends State<TaskEditor> {
   );
   late Priority priority = widget.task?.priority ?? Priority.medium;
   late String category = widget.task?.category ?? 'Personal';
+  late DateTime? scheduledFor = widget.task?.scheduledFor;
+  late DateTime? dueAt = widget.task?.dueAt;
+
+  Future<void> pickDate(bool deadline) async {
+    final current = deadline ? dueAt : scheduledFor;
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: current ?? DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+      helpText: deadline ? 'FECHA LÍMITE' : 'PROGRAMAR TAREA',
+    );
+    if (picked == null || !mounted) return;
+    setState(() {
+      if (deadline) { dueAt = picked; } else { scheduledFor = picked; }
+    });
+  }
+
+  Widget dateRow(String label, DateTime? value, bool deadline) => Row(
+    children: [
+      Expanded(
+        child: OutlinedButton.icon(
+          onPressed: () => pickDate(deadline),
+          icon: const Icon(Icons.calendar_today_outlined, size: 17),
+          label: Text(value == null ? label : '$label: ${shortTaskDate(value)}'),
+        ),
+      ),
+      if (value != null)
+        IconButton(
+          tooltip: 'Quitar $label',
+          onPressed: () => setState(() {
+            if (deadline) { dueAt = null; } else { scheduledFor = null; }
+          }),
+          icon: const Icon(Icons.close_rounded, size: 19),
+        ),
+    ],
+  );
   @override
   void dispose() {
     title.dispose();
@@ -98,7 +139,11 @@ class _TaskEditorState extends State<TaskEditor> {
               ].map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
               onChanged: (v) => setState(() => category = v!),
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: 20),
+            dateRow('Planificar para', scheduledFor, false),
+            const SizedBox(height: 8),
+            dateRow('Fecha límite', dueAt, true),
+            const SizedBox(height: 18),
             SizedBox(
               width: double.infinity,
               child: PressButton(
@@ -111,6 +156,8 @@ class _TaskEditorState extends State<TaskEditor> {
                       title.text,
                       priority: priority,
                       category: category,
+                      scheduledFor: scheduledFor,
+                      dueAt: dueAt,
                     );
                   } else {
                     widget.state.updateTask(
@@ -118,6 +165,8 @@ class _TaskEditorState extends State<TaskEditor> {
                       title.text,
                       priority,
                       category,
+                      scheduledFor: scheduledFor,
+                      dueAt: dueAt,
                     );
                   }
                   Navigator.pop(context);
@@ -139,8 +188,9 @@ class _TaskEditorState extends State<TaskEditor> {
 }
 
 class TasksScreen extends StatefulWidget {
-  const TasksScreen({super.key, required this.state});
+  const TasksScreen({super.key, required this.state, this.navigate});
   final AppState state;
+  final ValueChanged<int>? navigate;
   @override
   State<TasksScreen> createState() => _TasksScreenState();
 }
@@ -151,9 +201,19 @@ class _TasksScreenState extends State<TasksScreen> {
   Widget build(BuildContext context) {
     final tasks =
         widget.state.tasks
-            .where(
-              (t) => filter == 0 || (filter == 1 ? !t.completed : t.completed),
-            )
+            .where((t) {
+              if (filter == 0) return true;
+              if (filter == 3) return t.completed;
+              if (t.completed) return false;
+              if (filter == 1) {
+                return (t.scheduledFor != null &&
+                    !AppState.day(t.scheduledFor!).isAfter(widget.state.today)) ||
+                    (t.dueAt != null &&
+                    !AppState.day(t.dueAt!).isAfter(widget.state.today));
+              }
+              return t.scheduledFor != null &&
+                  AppState.day(t.scheduledFor!).isAfter(widget.state.today);
+            })
             .toList()
           ..sort((a, b) {
             final done = (a.completed ? 1 : 0).compareTo(b.completed ? 1 : 0);
@@ -167,17 +227,29 @@ class _TasksScreenState extends State<TasksScreen> {
           padding: const EdgeInsets.only(bottom: 200),
           children: [
             PageHeading(
-              kicker: 'MENOS RUIDO. MÁS CLARIDAD.',
-              title: 'Un paso a la vez.',
-              subtitle:
-                  '${widget.state.pendingCount} tareas pendientes · Tú marcas el ritmo.',
+              kicker: 'TU TIEMPO. TUS PRIORIDADES.',
+              title: 'Tu agenda.',
+              subtitle: '${widget.state.pendingCount} pendientes · ${widget.state.dueTodayCount} con límite hoy o vencidas.',
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 23),
+              child: CinematicCard(
+                imageAsset: 'assets/images/focus_planner_schedule.webp',
+                title: 'Plan',
+                subtitle: 'Haz espacio para lo que importa.',
+                label: '${widget.state.todayPlan.length} tareas para hoy',
+                height: 184,
+                tint: const Color(0xFF3873A6),
+                alignment: Alignment.topCenter,
+                onTap: () => setState(() => filter = 1),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: ['Todas', 'Pendientes', 'Completadas'].indexed
+                children: ['Todas', 'Hoy', 'Próximas', 'Completadas'].indexed
                     .map(
                       (e) => ChoiceChip(
                         label: Text(e.$2),
@@ -193,10 +265,10 @@ class _TasksScreenState extends State<TasksScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: EmptyState(
-                  title: filter == 2
+                  title: filter == 3
                       ? 'Lo bueno está por llegar.'
                       : 'Espacio para un nuevo objetivo.',
-                  message: filter == 2
+                  message: filter == 3
                       ? 'Cada tarea que completes aparecerá aquí. Empieza con algo pequeño.'
                       : 'Anota lo que tienes en mente. Dar el primer paso también es avanzar.',
                   action: TextButton(
@@ -208,7 +280,20 @@ class _TasksScreenState extends State<TasksScreen> {
             ...tasks.map(
               (t) => Padding(
                 padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
-                child: TaskCard(task: t, state: widget.state),
+                child: TaskCard(
+                  task: t,
+                  state: widget.state,
+                  onFocus: widget.navigate == null ? null : () {
+                    if (!widget.state.running) {
+                      widget.state.selectTask(t.id);
+                    }
+                    widget.navigate!(2);
+                  },
+                  onQuickStart: widget.navigate == null ? null : () {
+                    widget.state.startQuickStart(t.id);
+                    widget.navigate!(2);
+                  },
+                ),
               ),
             ),
           ],
@@ -240,10 +325,12 @@ class TaskCard extends StatelessWidget {
     required this.task,
     required this.state,
     this.onFocus,
+    this.onQuickStart,
   });
   final FocusTask task;
   final AppState state;
   final VoidCallback? onFocus;
+  final VoidCallback? onQuickStart;
   @override
   Widget build(BuildContext context) => GlassCard(
     padding: const EdgeInsets.fromLTRB(10, 12, 10, 12),
@@ -309,19 +396,46 @@ class TaskCard extends StatelessWidget {
                         fontSize: 11,
                       ),
                     ),
+                    if (task.scheduledFor != null)
+                      Text('◷ ${shortTaskDate(task.scheduledFor!)}',
+                          style: const TextStyle(color: muted, fontSize: 11)),
+                    if (task.dueAt != null)
+                      Text('Límite ${shortTaskDate(task.dueAt!)}',
+                          style: TextStyle(
+                            color: !task.completed &&
+                                AppState.day(task.dueAt!).isBefore(state.today)
+                                ? accent : muted,
+                            fontSize: 11,
+                          )),
+                    if (task.hasPlan)
+                      Text('${task.stepsDone}/${task.microSteps.length} pasos',
+                          style: const TextStyle(color: muted, fontSize: 11)),
                   ],
                 ),
-                if (onFocus != null)
-                  TextButton(
-                    onPressed: onFocus,
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      alignment: Alignment.centerLeft,
-                    ),
-                    child: const Text(
-                      'Concentrarme en esta tarea  ↗',
-                      style: TextStyle(fontSize: 12),
-                    ),
+                if (!task.completed)
+                  Wrap(
+                    spacing: 9,
+                    runSpacing: 0,
+                    children: [
+                      TextButton.icon(
+                        onPressed: () => showStarterSheet(
+                          context, state, task,
+                          onFocus: onFocus,
+                          onQuickStart: onQuickStart,
+                        ),
+                        icon: const Icon(Icons.auto_awesome_outlined, size: 15),
+                        label: const Text('Ayúdame a empezar',
+                            style: TextStyle(fontSize: 11)),
+                        style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                      ),
+                      if (onFocus != null)
+                        TextButton(
+                          onPressed: onFocus,
+                          style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                          child: const Text('Enfocarme ↗',
+                              style: TextStyle(fontSize: 11)),
+                        ),
+                    ],
                   ),
               ],
             ),

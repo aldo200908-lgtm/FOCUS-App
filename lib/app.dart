@@ -75,7 +75,11 @@ class _FocusShellState extends State<FocusShell> with WidgetsBindingObserver {
           state: widget.state,
           navigate: (i) => setState(() => selected = i),
         ),
-        TasksScreen(key: const PageStorageKey('tasks'), state: widget.state),
+        TasksScreen(
+          key: const PageStorageKey('tasks'),
+          state: widget.state,
+          navigate: (i) => setState(() => selected = i),
+        ),
         ConcentrationScreen(
           key: const PageStorageKey('concentration'),
           state: widget.state,
@@ -111,31 +115,27 @@ class _FocusShellState extends State<FocusShell> with WidgetsBindingObserver {
                       padding: const EdgeInsets.fromLTRB(26, 12, 26, 4),
                       child: Row(
                         children: [
-                          const Icon(
-                            Icons.filter_center_focus_rounded,
-                            size: 20,
-                            color: accent,
-                          ),
-                          const SizedBox(width: 9),
-                          const Text(
-                            'FOCUS',
-                            style: TextStyle(
-                              letterSpacing: 4,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
+                          Text(
+                            '${widget.state.today.year}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 23,
+                              letterSpacing: -.8,
                             ),
                           ),
-                          const SizedBox(width: 18),
-                          Expanded(
-                            child: Text(
-                              _date(widget.state.today),
-                              textAlign: TextAlign.right,
-                              style: const TextStyle(
-                                color: muted,
-                                fontSize: 10,
-                                letterSpacing: .5,
-                              ),
-                            ),
+                          const Icon(Icons.keyboard_arrow_down_rounded,
+                              size: 20, color: muted),
+                          const Spacer(),
+                          const Text('FOCUS',
+                              style: TextStyle(color: muted, fontSize: 9,
+                                  letterSpacing: 3, fontWeight: FontWeight.w600)),
+                          const Spacer(),
+                          IconButton(
+                            tooltip: 'Ir a mi agenda',
+                            onPressed: () => setState(() => selected = 1),
+                            icon: const Icon(Icons.calendar_month_outlined,
+                                size: 22, color: Colors.white),
                           ),
                         ],
                       ),
@@ -178,12 +178,17 @@ class _FocusShellState extends State<FocusShell> with WidgetsBindingObserver {
                             ),
                           ),
                           Positioned(
-                            left: 18,
-                            right: 18,
-                            bottom: 16 + MediaQuery.paddingOf(context).bottom,
-                            child: _Navigation(
-                              selected: selected,
-                              onSelected: (i) => setState(() => selected = i),
+                            left: 12,
+                            right: 12,
+                            bottom: 14 + MediaQuery.paddingOf(context).bottom,
+                            child: Center(
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(maxWidth: 364),
+                                child: _Navigation(
+                                  selected: selected,
+                                  onSelected: (i) => setState(() => selected = i),
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -198,8 +203,7 @@ class _FocusShellState extends State<FocusShell> with WidgetsBindingObserver {
       );
     },
   );
-  String _date(DateTime d) =>
-      '${['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'][d.weekday - 1]}, ${d.day} ${['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'][d.month - 1]}';
+
 }
 
 class _Navigation extends StatelessWidget {
@@ -219,7 +223,7 @@ class _Navigation extends StatelessWidget {
     return GlassCard(
       blur: true,
       radius: 48,
-      padding: const EdgeInsets.all(7),
+      padding: const EdgeInsets.all(6),
       child: Row(
         children: [
           for (var i = 0; i < 5; i++)
@@ -243,11 +247,11 @@ class _Navigation extends StatelessWidget {
                         curve: Curves.easeOut,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 2,
-                          vertical: 12,
+                          vertical: 11,
                         ),
                         decoration: BoxDecoration(
                           color: i == selected
-                              ? Colors.white.withValues(alpha: .12)
+                              ? Colors.white.withValues(alpha: .20)
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(40),
                         ),
@@ -256,7 +260,7 @@ class _Navigation extends StatelessWidget {
                           children: [
                             Icon(
                               icons[i],
-                              color: i == selected ? accent : muted,
+                              color: i == selected ? Colors.white : muted,
                               size: 21,
                             ),
                             const SizedBox(height: 6),
@@ -265,7 +269,7 @@ class _Navigation extends StatelessWidget {
                                 labels[i],
                                 style: TextStyle(
                                   color: i == selected ? Colors.white : muted,
-                                  fontSize: 8,
+                                  fontSize: 9,
                                   fontWeight: i == selected
                                       ? FontWeight.w600
                                       : FontWeight.w400,
