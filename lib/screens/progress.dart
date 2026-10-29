@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import '../core/app_state.dart';
 import '../ui/design.dart';
+import '../ui/cinematic.dart';
 
 class ProgressScreen extends StatelessWidget {
   const ProgressScreen({super.key, required this.state});
@@ -26,6 +27,17 @@ class ProgressScreen extends StatelessWidget {
           kicker: 'CADA PEQUEÑO PASO SUMA',
           title: 'Tu esfuerzo cuenta.',
           subtitle: 'No necesitas hacerlo perfecto.\nSolo seguir avanzando.',
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 0, 24, 22),
+          child: CinematicCard(
+            title: 'Racha',
+            subtitle: '${state.streak} días de constancia · ${state.xp} XP',
+            label: 'TU HISTORIA',
+            height: 188,
+            tint: const Color(0xFF9A6447),
+            alignment: Alignment.bottomRight,
+          ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
